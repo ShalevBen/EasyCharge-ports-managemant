@@ -27,10 +27,10 @@ typedef struct BST_Station {
 
 //bst for car
 BST_Car* CreateEmptyBST_Car();
-int isBST_Car_empty(BST_Car* tree);
+int isBST_Car_empty(tCar* tree);
 tCar* Create_Car_Leaf(Car* car);
-BST_Car* insartToBST_Car(BST_Car* tree,Car* car);
-Car* deletefromBST_Car(BST_Car* tree,char* licenseNumber);
+tCar* insartToBST_Car(tCar* tree,Car* car);
+Car* deletefromBST_Car(tCar* tree,char* licenseNumber);
 void printBST_Car(tCar* root);
 
 

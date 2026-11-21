@@ -15,18 +15,20 @@ BST_Car* CreateEmptyBST_Car() {
 	tree->car_root = NULL;
 	return tree;
 }
-int isBST_Car_empty(BST_Car* tree)
+
+int isBST_Car_empty(tCar* tree)
 {
-	if (tree->car_root == NULL)
+	if (tree == NULL)
 	{
 		return 1;// is empty
 	}
 	else
 		return 0;//not empty
 }
+
 tCar* Create_Car_Leaf(Car* car)
 {
-	tCar* new_leaf = (tCar*)calloc(1, sizeof(tCar));
+	tCar* new_leaf = (tCar*)malloc(sizeof(tCar));
 	if (new_leaf == NULL)
 	{
 		printf("allocation failed! \n");
@@ -36,57 +38,65 @@ tCar* Create_Car_Leaf(Car* car)
 	new_leaf->left = new_leaf->right = NULL;
 	return new_leaf;
 }
-BST_Car* insartToBST_Car(BST_Car* tree, Car* car)//return the updated tree
+
+tCar* insartToBST_Car(tCar* tree, Car* car)//return the updated tree
 {
 	if ( isBST_Car_empty(tree) == 1)
 	{
 		tCar* new_car = Create_Car_Leaf(car);
-		tree->car_root = new_car;
+		tree = new_car;
+		printf("insartion sucssesfull!\n");
 		return tree;
 	}
 	else
 	{
+		
 		tCar* new_car = Create_Car_Leaf(car);
+		//using lexicographic  sort meaning it compers between the licenses and see if 123......>122...... for example
 		
-		//using laxograpic sort meening it compers between the licenses and see if 123......>122...... for example
-		if (strcmp(tree->car_root->car->nLicense, new_car->car->nLicense) > 0)//if cmp > 0  enter the left subtree meening new_car->nLicense < root->car->nLicense
-		{
-			if (tree->car_root->left == NULL)//if left subtree empty put new_car in it
+			if (strcmp(tree->car->nLicense, new_car->car->nLicense) > 0)//if cmp > 0  enter the left subtree meaning new_car->nLicense < root->car->nLicense
 			{
-				tree->car_root->left = new_car;
-				printf("insartion sucssesfull!\n");
-				
+
+				if (tree->left == NULL)//if left subtree empty put new_car in it
+				{
+					tree->left = new_car;
+					printf("insartion sucssesfull!\n");
+					return tree;
+				}
+				else
+				{
+					insartToBST_Car(tree->left, new_car->car);// looking in the left subtree until finds an empty slot to put new_car in
+
+				}
+				return tree;
+
 			}
-			else 
+
+
+			else if (strcmp(tree->car->nLicense, new_car->car->nLicense) < 0) //enter right subtree if cmp < 0 
 			{
-				insartToBST_Car(tree, new_car);// looking in the left subtree until finds an empty slot to put new_car in
+				if (tree->right == NULL)//if root->right empty put car in it
+				{
+					tree->right = new_car;
+					printf("insartion sucssesfull!\n");
+					return tree;
+				}
+				else
+				{
+					insartToBST_Car(tree->right, new_car->car);//looking in the right subtree until finds an empty slot to put new_car in
+
+				}
+				return tree;
 				
-			}
-			return tree;
-			
-		}
-		
-		else if (strcmp(tree->car_root->car->nLicense, new_car->car->nLicense) < 0) //enter right subtree if cmp < 0 
-		{
-			if (tree->car_root->right == NULL)//if root->right empty put car in it
-			{
-				tree->car_root->right = new_car;
-				printf("insartion sucssesfull!\n");
 			}
 			else
 			{
-				insartToBST_Car(tree, new_car);//looking in the right subtree until finds an empty slot to put new_car in
-				
+				printf("car already exists! \n");
+				return tree;
 			}
-			return tree;
-		}
-		else
-		{
-			printf("car already exists! \n");
-			return;
 		}
 	}
-}
+
 Car* deletefromBST_Car(BST_Car* tree, char* licenseNumber)
 {
 	if (isBST_Car_empty(tree) == 1)

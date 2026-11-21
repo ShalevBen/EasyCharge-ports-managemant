@@ -11,6 +11,7 @@
 
 void loadfiles();
 int countLines(FILE* file);
+Car* searchCar(int licence_num);
 
 int main()
 {
@@ -31,6 +32,11 @@ int countLines(FILE* file)
 	return count;
 }
 
+Car* searchCar(int licence_num,BST_Car* root_car)
+{
+
+
+}
 
 void loadfiles()
 {
@@ -66,6 +72,8 @@ void loadfiles()
 
 	char line[1024];//storing the data we collect from a line
 	int i = 0;
+	//create the tree and initialize it
+	BST_Car* root_car = CreateEmptyBST_Car();
 	while (fgets(line, sizeof(line), file_car) != NULL)
 	{
 		char* token;
@@ -73,17 +81,18 @@ void loadfiles()
 		strcpy(car[i].nLicense, token);
 
 		token = strtok(NULL, ",");//forwarding the token to the next field
-		if (strcmp(token,"FAST"))
+		//strcmp return 0 if it finds a match, 1 otherwise.
+		if (strcmp(token,"FAST") == 0)
 		{
-			car[i].portType = token;
+			car[i].portType = FAST;
 		} 
-		else if (strcmp(token, "MID"))
+		else if (strcmp(token, "MID") == 0)
 		{
-			car[i].portType = atoi(token);
+			car[i].portType = MID;
 		}
-		if (strcmp(token, "SLOW"))
+		else
 		{
-			car[i].portType = atoi(token);
+			car[i].portType = SLOW;
 		}
 
 		token = strtok(NULL, ",");
@@ -105,9 +114,9 @@ void loadfiles()
 		token = strtok(NULL, ",");
 		car[i].inQueue = atoi(token);
 
-		//create the tree and initialize it
-		BST_Car* root = CreateEmptyBST_Car();
-		insartToBST_Car(root, &car[i]);
+		// what i did here is i give the car root pointer a pointer and not a value,
+		//so the car_root dosent change itself it juts change whice pointer it point to. 
+		root_car->car_root = insartToBST_Car(root_car->car_root, &car[i]); 
 
 		i++;
 	}
@@ -145,6 +154,8 @@ void loadfiles()
 
 	line[1024];//storing the data we collect from a line
 	i = 0;
+	PortList* port_list = makeEmptyList(); // creates a new port singly linked list
+
 	while (fgets(line, sizeof(line), file_port) != NULL)
 	{
 
@@ -155,7 +166,18 @@ void loadfiles()
 		port[i].num = atoi(token);
 
 		token = strtok(NULL, ",");
-		port[i].portType = atoi(token);
+		if (strcmp(token, "FAST") == 0)
+		{
+			port[i].portType = FAST;
+		}
+		else if (strcmp(token, "MID") == 0)
+		{
+			port[i].portType = MID;
+		}
+		else
+		{
+			port[i].portType = SLOW;
+		}
 
 		token = strtok(NULL, ",");
 		port[i].status = atoi(token);
@@ -183,6 +205,9 @@ void loadfiles()
 			exit(1);
 		}
 		strcpy(port[i].p2car->nLicense, token);
+		port[i].p2car->inQueue = NULL;
+
+		port_list = addtoList(port_list,&port[i]);
 
 		i++;
 	}
@@ -273,14 +298,14 @@ void loadfiles()
 	}
 
 	//creating a BST
-	BST_Station* root = CreateEmptyBST_Station();
+	BST_Station* root_station = CreateEmptyBST_Station();
 	//add to the tree the stations
-	insartToBST_Station(root, &station[i]);
+	insartToBST_Station(root_station, &station[i]);
 
 	i++;
-
-	fclose(file_station);
+	//you should close thsese only after you shut down the system.
+	/*fclose(file_station);
 	free(car_stationIDs);
-	free(port_stationIDs);
+	free(port_stationIDs);*/
 }
 

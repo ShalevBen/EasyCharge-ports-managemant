@@ -37,18 +37,41 @@ int isListEmpty(PortList* list)
 	}
 	return 0;//not empty
 }
-Port* addtoList(PortList* list, Port* port)
+PortList* addtoList(PortList* list, Port* port)
 {
 	Port* new_port = createNewPort(port);
 	if (isListEmpty(list) == 1)
 	{
 		list->head = new_port;
+		list->head->next = list->tail;
 		return list;
 	}
 	else
 	{
-		list->tail = port;
-		list->head->next = list->tail->next;
+		//the case where the first place after the head is empty.
+		if (list->head->next == NULL)
+		{
+			
+			list->tail = new_port;
+			list->tail->next = NULL;
+			list->head->next = list->tail;
+			return list;
+		}
+		
+		//for the case where the null place is not diractly after head
+		Port* temp = list->head;
+		while (temp != NULL)
+		{
+			if (temp->next == NULL)
+			{
+				temp = new_port;
+				temp->next = NULL;
+				list->head = temp;
+				return list;
+			}
+			temp = temp->next;
+		}
+		printf("The list is full \n");
 		return list;
 	}
 }
